@@ -38,7 +38,7 @@ contract VeritaseumToken is Ownable, StandardToken, Killable {
     
     /// @notice Used to buy tokens with Ether
     /// @param _recipient The actual recipient of the tokens
-    function purchaseTokens(address _recipient) payable returns (bool) {
+    function purchaseTokens(address _recipient) payable returns (uint) {
         // check if now is within ICO period, or if the amount sent is nothing
         if ((now < startTime) || (now > closeTime) || (msg.value == 0)) throw;
         
@@ -60,21 +60,21 @@ contract VeritaseumToken is Ownable, StandardToken, Killable {
         else {
             currentPrice = price;
         }
-        uint tokens = safeMul(1 ether, safeDiv(msg.value, currentPrice));
+        uint tokens = safeDiv(safeMul(msg.value, 1 ether), currentPrice);
 
         // check if this purchase will go over the allowed ICO allocation ratio
         // current ICO ownership: totalSupply - balances[owner]
         // ICO may have up to allocationRatio of totalSupply: totalSupply / allocationRatio
         if ((totalSupply - balances[owner] + tokens) <= safeDiv(totalSupply, allocationRatio)) {
             // transfer tokens from owner account to purchasers account
-            balances[_recipient] = safeAdd(balances[_recipient], tokens);
-            balances[owner] = safeSub(balances[owner], tokens);
+            balances[_recipient] = balances[_recipient] + tokens;
+            balances[owner] = balances[owner] - tokens;
         }
         else {
             // return the Ether
             throw;
         }
-        return true;
+        return tokens;
     }
 
     //////////////// owner only functions below
@@ -83,8 +83,8 @@ contract VeritaseumToken is Ownable, StandardToken, Killable {
     /// @param _recipient The address of the recipient to receive the tokens
     /// @param _value The amount of tokens
     function allocateTokens(address _recipient, uint _value) onlyOwner {
-        balances[_recipient] = balances[_recipient] + _value;
-        balances[owner] = balances[owner] - _value;
+        balances[_recipient] += _value;
+        balances[owner] -= _value;
     }
 
     /// @notice Withdraw all Ether in this contract
