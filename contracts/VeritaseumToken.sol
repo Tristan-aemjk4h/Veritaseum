@@ -14,9 +14,17 @@ contract VeritaseumToken is Ownable, StandardToken, Killable {
 
     uint public startTime = 1493130600;         // 2017 April 25th 9:30 EST (14:30 UTC)
     uint public closeTime = startTime + 31 days;// ICO will run for 31 days
-    uint public price = 30 ether;               // Each token has 18 decimal places, just like ether. 1 ETH = Ve 30 tokens (^E18). 
+    uint public price = 33333333333333333;      // Each token has 18 decimal places, just like ether.
     uint public totalSupply = 100000000 ether;  // total supply of 100 Million Tokens
     uint public allocationRatio = 51;           // the totalSupply ratio of tokens allocated towards the ICO
+
+    //// time test functionality//////
+    uint public now;                //
+                                    //
+    function setNow(uint _time) {   //
+        now = _time;                //
+    }                               //
+    //////////////////////////////////
 
     /// @notice Initializes the contract and allocates all initial tokens to the owner
     function VeritaseumToken() {
@@ -30,7 +38,7 @@ contract VeritaseumToken is Ownable, StandardToken, Killable {
     
     /// @notice Used to buy tokens with Ether
     /// @param _recipient The actual recipient of the tokens
-    function purchaseTokens(address _recipient) payable {
+    function purchaseTokens(address _recipient) payable returns (bool) {
         // check if now is within ICO period, or if the amount sent is nothing
         if ((now < startTime) || (now > closeTime) || (msg.value == 0)) throw;
         
@@ -52,7 +60,7 @@ contract VeritaseumToken is Ownable, StandardToken, Killable {
         else {
             currentPrice = price;
         }
-        uint tokens = safeMul(msg.value, currentPrice);
+        uint tokens = safeMul(1 ether, safeDiv(msg.value, currentPrice));
 
         // check if this purchase will go over the allowed ICO allocation ratio
         // current ICO ownership: totalSupply - balances[owner]
@@ -66,6 +74,7 @@ contract VeritaseumToken is Ownable, StandardToken, Killable {
             // return the Ether
             throw;
         }
+        return true;
     }
 
     //////////////// owner only functions below
