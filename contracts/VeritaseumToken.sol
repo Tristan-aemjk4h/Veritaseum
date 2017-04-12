@@ -18,13 +18,13 @@ contract VeritaseumToken is Ownable, StandardToken, Killable {
     uint public totalSupply = 100000000 ether;  // total supply of 100 Million Tokens
     uint public allocationRatio = 51;           // the totalSupply ratio of tokens allocated towards the ICO
 
-    //// time test functionality//////
-    uint public now;                //
-                                    //
-    function setNow(uint _time) {   //
-        now = _time;                //
-    }                               //
-    //////////////////////////////////
+    // //// time test functionality//////
+    // uint public now;                //
+    //                                 //
+    // function setNow(uint _time) {   //
+    //     now = _time;                //
+    // }                               //
+    // //////////////////////////////////
 
     /// @notice Initializes the contract and allocates all initial tokens to the owner
     function VeritaseumToken() {
