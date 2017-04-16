@@ -65,7 +65,7 @@ contract VeritaseumToken is Ownable, StandardToken, Killable {
         // check if this purchase will go over the allowed ICO allocation ratio
         // current ICO ownership: totalSupply - balances[owner]
         // ICO may have up to allocationRatio of totalSupply: totalSupply / allocationRatio
-        if ((totalSupply - balances[owner] + tokens) <= safeDiv(totalSupply, allocationRatio)) {
+        if ((totalSupply - balances[owner] + tokens) <= safeDiv(safeMul(totalSupply, allocationRatio), 100)) {
             // transfer tokens from owner account to purchasers account
             balances[_recipient] = balances[_recipient] + tokens;
             balances[owner] = balances[owner] - tokens;
