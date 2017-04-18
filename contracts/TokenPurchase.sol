@@ -17,15 +17,13 @@ contract TokenPurchase is Ownable, Killable, SafeMath {
 
 	ERC20 public token;							// the address of the token 
 
-	// uint public allocationRatio = 51;           // the totalSupply ratio of tokens allocated towards the ICO
-
-	//// time test functionality /////
-	uint public now;                //
-	                                //
-	function setNow(uint _time) {   //
-	    now = _time;                //
-	}                               //
-	//////////////////////////////////
+	// //// time test functionality /////
+	// uint public now;                //
+	//                                 //
+	// function setNow(uint _time) {   //
+	//     now = _time;                //
+	// }                               //
+	// //////////////////////////////////
 
 	/// @notice Used to buy tokens with Ether
 	/// @return The amount of actual tokens purchased
