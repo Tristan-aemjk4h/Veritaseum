@@ -9,9 +9,9 @@ import 'zeppelin/SafeMath.sol'; 				// safeMath
 /// @author Riaan F Venter~ RFVenter~ <msg@rfv.io>
 contract TokenPurchase is Ownable, Killable, SafeMath {
 
-	uint public startTime = 1493130600;         // 2017 April 25th 9:30 EST (14:30 UTC)
-	uint public closeTime = startTime + 31 days;// ICO will run for 31 days
-	uint public price = 33333333333333333;      // Each token has 18 decimal places, just like ether.
+	uint public constant startTime = 1493130600;         	// 2017 April 25th 9:30 EST (14:30 UTC)
+	uint public constant closeTime = startTime + 31 days;	// ICO will run for 31 days
+	uint public constant price = 33333333333333333;     	// Each token has 18 decimal places, just like ether.
 	uint private constant priceDayOne = price * 8 / 10;		// Day one price [20 % discount (x * 8 / 10)]
 	uint private constant priceDayTwo = price * 9 / 10;		// Day two price [10 % discount (x * 9 / 10)]
 
@@ -31,10 +31,8 @@ contract TokenPurchase is Ownable, Killable, SafeMath {
 	    // check if now is within ICO period, or if the amount sent is nothing
 	    if ((now < startTime) || (now > closeTime) || (msg.value == 0)) throw;
 	    
-	    // the check to make sure token allocation is within the allocation ratio can only be done after the currentPrice has been determined below (based on prevaling rate)
-	    
 	    uint currentPrice;
-	    // using safeMath for all calculatinos below except for datetimes
+	    // only using safeMath for calculations involving external incoming data (to safe gas)
 	    if (now < (startTime + 1 days)) {       // day one discount
 	        currentPrice = priceDayOne;
 	    } 
@@ -43,17 +41,16 @@ contract TokenPurchase is Ownable, Killable, SafeMath {
 	    }
 	    else if (now < (startTime + 12 days)) {
 	        // 1 % reduction in the discounted rate from day 2 until day 12 (sliding scale per second)
-	        // 8640000 is 60 x 60 x 24 x 100 (100 for 1%) (60 x 60 x 24 for seconds per day)
-	        currentPrice = price - ((startTime + 12 days - now) * price / 8640000);
+	        currentPrice = price - ((startTime + 12 days - now) * price / 100 days);
 	    }
 	    else {
 	        currentPrice = price;
 	    }
-	    uint tokens = safeMul(msg.value, 1 ether) / currentPrice;		// only one safeMath check is required here
+	    uint tokens = safeMul(msg.value, 1 ether) / currentPrice;		// only one safeMath check is required for the incoming ether value
 
-	    if (!token.transferFrom(owner, msg.sender, tokens)) throw;
+	    if (!token.transferFrom(owner, msg.sender, tokens)) throw;		// if there is some error with the token transfer, throw and return the Ether
 
-	    return tokens;
+	    return tokens;							// after successful purchase, return the amount of tokens purchased value
 	}
 
 	//////////////// owner only functions below
