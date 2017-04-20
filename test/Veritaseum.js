@@ -7,7 +7,7 @@ contract('VeritaseumToken', function(accounts) {
     var token;
     var purchase;
     const STARTTIME = 1493130600;
-    const TOTALSUPLY = 100000000000000000000000000; 
+    const TOTALSUPPLY = 100000000000000000000000000; 
     const ONEDAY = 24 * 60 * 60;
     var totalTokens; 
 
@@ -16,7 +16,7 @@ contract('VeritaseumToken', function(accounts) {
       return TokenPurchase.deployed();
     }).then(function(instance) {
       purchase = instance;
-      return token.approve(purchase.address, TOTALSUPLY * 51 / 100);
+      return token.approve(purchase.address, TOTALSUPPLY * 51 / 100);
     }).then(function(fx) {
       return purchase.setToken(token.address);
     }).then(function(fx) {
@@ -28,7 +28,7 @@ contract('VeritaseumToken', function(accounts) {
       assert.equal(owner, accounts[0], "The owner should be set to account 1");
       return token.totalSupply.call();
     }).then(function(supply) {
-      assert.equal(supply, TOTALSUPLY, "The total supply should be 100M with 18 decimal places");
+      assert.equal(supply, TOTALSUPPLY, "The total supply should be 100M with 18 decimal places");
       return purchase.setNow(STARTTIME - ONEDAY);
     }).then(function() {
       return purchase.purchaseTokens({from: accounts[1], value: 1000000000000000000});
@@ -168,7 +168,7 @@ contract('VeritaseumToken', function(accounts) {
       assert.equal(balance.toNumber(), 206666666666666683200);
       return token.balanceOf.call(accounts[0]);
     }).then(function(balance) {
-      bn1 = new BigNumber(TOTALSUPLY);
+      bn1 = new BigNumber(TOTALSUPPLY);
       bn2 = new BigNumber("206666666666666683200");
       assert.equal(balance.toNumber(), bn1.minus(bn2).toNumber());
     });
